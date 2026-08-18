@@ -1,0 +1,39 @@
+template:
+  name: helm-chart-repro
+  identifier: helmchartrepro
+  versionLabel: "1"
+  type: Pipeline
+  projectIdentifier: thrishank_test
+  orgIdentifier: default
+  tags: {}
+  spec:
+    stages:
+      - stage:
+          name: deploy
+          identifier: deploy
+          type: Deployment
+          spec:
+            deploymentType: NativeHelm
+            service:
+              serviceRef: <+input>
+              serviceInputs: <+input>
+            environment:
+              environmentRef: <+input>
+              deployToAll: false
+              infrastructureDefinitions: <+input>
+            execution:
+              steps:
+                - step:
+                    type: HelmDeploy
+                    name: Helm Deploy
+                    identifier: helmDeploy
+                    spec:
+                      skipDryRun: false
+                    timeout: 10m
+              rollbackSteps: []
+          failureStrategies:
+            - onFailure:
+                errors:
+                  - AllErrors
+                action:
+                  type: StageRollback
